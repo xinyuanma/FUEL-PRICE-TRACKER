@@ -1,0 +1,9 @@
+requests
+beautifulsoup4
+schedule
+Flask
+gunicorn
+apscheduler
+psycopg2-binary
+geopy==2.2.0
+python-dotenv==0.19.1

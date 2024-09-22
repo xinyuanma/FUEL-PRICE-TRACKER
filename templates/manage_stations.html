@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Stations</title>
+</head>
+<body>
+    <h1>Manage Stations</h1>
+    
+    <form action="{{ url_for('manage_stations') }}" method="post">
+        <input type="text" name="name" placeholder="Station Name" required>
+        <input type="number" name="latitude" placeholder="Latitude" step="any" required>
+        <input type="number" name="longitude" placeholder="Longitude" step="any" required>
+        <button type="submit">Add/Update Station</button>
+    </form>
+
+    <h2>Current Stations</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+        </tr>
+        {% for station in stations %}
+        <tr>
+            <td>{{ station[0] }}</td>
+            <td>{{ station[1] }}</td>
+            <td>{{ station[2] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

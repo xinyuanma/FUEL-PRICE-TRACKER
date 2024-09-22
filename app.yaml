@@ -1,0 +1,19 @@
+name: fuel-price-tracker
+services:
+- name: web
+  github:
+    repo: your-github-username/fuel-price-tracker
+    branch: main
+  dockerfile_path: Dockerfile
+  http_port: 5001
+  envs:
+  - key: DATABASE_URL
+    value: ${db.DATABASE_URL}
+  - key: SMTP_SERVER
+    value: smtp.163.com
+  - key: SMTP_PORT
+    value: "465"
+  - key: SMTP_USERNAME
+    value: ${smtp.USERNAME}
+  - key: SMTP_PASSWORD
+    value: ${smtp.PASSWORD}

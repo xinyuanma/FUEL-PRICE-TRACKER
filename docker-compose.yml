@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./data:/data
+    env_file:
+      - .env
+
+  sqlitebrowser:
+    image: lscr.io/linuxserver/sqlitebrowser:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/data
+    environment:
+      - PUID=1000
+      - PGID=1000
+
+volumes:
+  data:

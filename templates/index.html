@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel Price Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body>
+    <h1>Fuel Price Tracker</h1>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h2>Your Location</h2>
+    <form action="{{ url_for('add_vehicle') }}" method="post">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="address" placeholder="Address" required>
+        <button type="submit">Set Location</button>
+    </form>
+
+    {% if user_email %}
+        {% if user_location %}
+            <p>Current Location: {{ user_location[2] }}</p>
+            <p>Coordinates: Latitude {{ user_location[0] }}, Longitude {{ user_location[1] }}</p>
+        {% else %}
+            <p>No location set. Please enter your location above.</p>
+        {% endif %}
+    {% endif %}
+
+    <h2>Latest Fuel Prices</h2>
+    <form action="{{ url_for('home') }}" method="get">
+        <input type="email" name="email" placeholder="Enter your email to see distances" {% if user_email %}value="{{ user_email }}"{% endif %}>
+        <button type="submit">Show Prices and Distances</button>
+    </form>
+
+    {% if grouped_prices %}
+        {% for fuel_type, prices in grouped_prices.items() %}
+            <h3>{{ fuel_type }}</h3>
+            <table>
+                <tr>
+                    <th>Station</th>
+                    <th>Price</th>
+                    <th>Last Updated</th>
+                    {% if user_email %}
+                        <th>Distance (km)</th>
+                        <th>Time (minutes)</th>
+                    {% endif %}
+                </tr>
+                {% for price in prices %}
+                    <tr>
+                        <td>{{ price[1] }}</td>
+                        <td class="price">€{{ price[2] }}</td>
+                        <td class="updated">{{ price[3] }}</td>
+                        {% if user_email %}
+                            <td>{{ price[5] if price[5] is not none else 'N/A' }}</td>
+                            <td>{{ price[6] if price[6] is not none else 'N/A' }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+    {% else %}
+        <p>No fuel price data available.</p>
+    {% endif %}
+
+    <form action="{{ url_for('update_prices') }}" method="post">
+        <button type="submit">Update Prices</button>
+    </form>
+
+    <h2>Subscribe</h2>
+    <form action="{{ url_for('subscribe') }}" method="post">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="number" name="threshold" placeholder="Price Threshold" step="0.01" required>
+        <select name="fuel_type" required>
+            <option value="95 E10">95 E10</option>
+            <option value="98 E5">98 E5</option>
+            <option value="Diesel">Diesel</option>
+        </select>
+        <button type="submit">Subscribe</button>
+    </form>
+
+    <h2>Unsubscribe</h2>
+    <form action="{{ url_for('unsubscribe') }}" method="post">
+        <input type="email" name="email" placeholder="Email" required>
+        <button type="submit">Unsubscribe</button>
+    </form>
+
+    <h2>Current Subscriptions</h2>
+    <ul>
+        {% for sub in subscriptions %}
+            <li>{{ sub[0] }} (Threshold: €{{ sub[1] }}, Fuel Type: {{ sub[2] }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
